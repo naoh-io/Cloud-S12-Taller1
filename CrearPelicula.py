@@ -5,7 +5,6 @@ import json
 
 def lambda_handler(event, context):
     try:
-        # LOG DE ENTRADA: Estandarizado como INFO con los datos del evento recibido
         print(json.dumps({
             "tipo": "INFO",
             "log_datos": {
@@ -14,12 +13,10 @@ def lambda_handler(event, context):
             }
         }))
         
-        # Entrada (json)
         tenant_id = event['body']['tenant_id']
         pelicula_datos = event['body']['pelicula_datos']
         nombre_tabla = os.environ["TABLE_NAME"]
         
-        # Proceso
         uuidv4 = str(uuid.uuid4())
         pelicula = {
             'tenant_id': tenant_id,
@@ -31,7 +28,6 @@ def lambda_handler(event, context):
         table = dynamodb.Table(nombre_tabla)
         response = table.put_item(Item=pelicula)
         
-        # LOG DE SALIDA (EXITOSO): Estandarizado como INFO con los datos procesados
         print(json.dumps({
             "tipo": "INFO",
             "log_datos": {
@@ -50,7 +46,6 @@ def lambda_handler(event, context):
         }
         
     except Exception as e:
-        # LOG DE ERROR: Captura cualquier falla estructural o de infraestructura
         print(json.dumps({
             "tipo": "ERROR",
             "log_datos": {
@@ -60,7 +55,6 @@ def lambda_handler(event, context):
             }
         }))
         
-        # Respuesta controlada para evitar exponer el stack trace directo al cliente
         return {
             'statusCode': 500,
             'error': type(e).__name__,
